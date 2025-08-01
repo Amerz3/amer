@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نموذج استلام جور أعمدة</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #111;
+      color: #f0f0f0;
+      direction: rtl;
+      padding: 10px; /* تقليل الـ padding ليناسب الشاشات الصغيرة */
+      margin: 0; /* إزالة الـ margin الافتراضي للمتصفح */
+      box-sizing: border-box; /* التأكد من أن الـ padding لا يزيد من حجم العنصر */
+    }
+    .section {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 5px #333;
+      max-width: 600px; /* تحديد أقصى عرض للنموذج ليكون شكله جيداً على الشاشات الكبيرة */
+      margin-left: auto; /* لمركزة النموذج في منتصف الشاشة */
+      margin-right: auto; /* لمركزة النموذج في منتصف الشاشة */
+    }
+    label {
+      display: block;
+      margin: 8px 0 4px;
+    }
+    input, select, textarea {
+      width: calc(100% - 12px); /* تعديل العرض ليأخذ الـ padding في الحسبان */
+      padding: 6px;
+      margin-bottom: 10px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background-color: #222;
+      color: #f0f0f0;
+      box-sizing: border-box; /* مهم جداً لتجنب تجاوز العرض */
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-left: 5px; /* Added for spacing */
+      width: auto; /* جعل الزر يأخذ حجم محتواه */
+      display: inline-block; /* لضمان بقاء الأزرار في سطر واحد */
+    }
+    button.remove-btn {
+      background-color: #dc3545;
+      margin-top: 5px;
+      padding: 5px 10px;
+      font-size: 0.8em;
+      float: left; /* To position it on the right in RTL */
+      width: auto;
+    }
+    button.remove-btn:hover {
+      background-color: #c82333;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .column-box {
+      border: 1px solid #444;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      background-color: #2a2a2a;
+      position: relative; /* For positioning the remove button */
+    }
+    .sub-section-header {
+        color: #bbb;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        border-bottom: 1px dashed #555;
+        padding-bottom: 5px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h3 {
+        margin-top: 25px;
+        margin-bottom: 10px;
+        color: #eee;
+        text-align: center; /* لضمان تمركز العناوين الفرعية */
+    }
+    h4 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        color: #ddd;
+        text-align: center; /* لضمان تمركز العناوين الفرعية */
+    }
+    .saved-list {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #333;
+      margin-top: 30px;
+      max-width: 600px; /* تحديد أقصى عرض لقائمة الحفظ */
+      margin-left: auto; /* لمركزة القائمة */
+      margin-right: auto; /* لمركزة القائمة */
+    }
+    .saved-item {
+      background-color: #2a2a2a;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden; /* لمسح الـ floats */
+    }
+    .saved-item button {
+        float: left; /* For RTL */
+        margin-right: 5px;
+        padding: 5px 10px;
+        font-size: 0.8em;
+        margin-bottom: 5px; /* لإضافة تباعد بين الأزرار إذا لم تتسع في سطر واحد */
+    }
+    .saved-item button.view-btn {
+        background-color: #007bff;
+    }
+    .saved-item button.view-btn:hover {
+        background-color: #0056b3;
+    }
+    .saved-item button.delete-btn {
+        background-color: #dc3545;
+    }
+    .saved-item button.delete-btn:hover {
+        background-color: #c82333;
+    }
+    .search-box {
+      margin-bottom: 20px;
+    }
+    /* New styles for displaying detailed saved data */
+    .detail-view {
+        background-color: #2a2a2a;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border: 1px solid #444;
+    }
+    .detail-view h4 {
+        border-bottom: 1px solid #444;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    .detail-column-item {
+        background-color: #333;
+        padding: 8px;
+        border-radius: 5px;
+        margin-bottom: 8px;
+        border: 1px dashed #555;
+    }
+
+    /* Media Queries for smaller screens (optional, mostly for fine-tuning) */
+    @media (max-width: 480px) {
+        body {
+            padding: 5px; /* تقليل الـ padding أكثر للهواتف الصغيرة جداً */
+            font-size: 0.9em; /* تصغير حجم الخط قليلاً */
+        }
+        .section, .saved-list {
+            padding: 10px;
+        }
+        button {
+            padding: 8px 10px;
+            font-size: 0.9em;
+        }
+        .saved-item button {
+            display: block; /* جعل الأزرار تأخذ سطراً كاملاً على الشاشات الصغيرة جداً */
+            float: none;
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 5px;
+        }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>نموذج استلام جور أعمدة</h2>
+
+  <div class="section" id="main-form">
+    <label>اسم المعاملة:</label>
+    <input type="text" id="transaction_name">
+
+    <label>رقم المعاملة:</label>
+    <input type="text" id="transaction_number">
+
+    <label>اسم المقاول / الشركة:</label>
+    <input type="text" id="contractor">
+
+    <label>الموقع:</label>
+    <input type="text" id="location">
+
+    <label>تاريخ الاستلام:</label>
+    <input type="date" id="date">
+
+    <label>ملاحظات عامة:</label>
+    <textarea rows="3" id="general_notes"></textarea>
+  </div>
+
+  <h3>تفاصيل الجور / الأعمدة</h3>
+  <div class="section"> <div id="columns-container"></div>
+    <button onclick="addColumn()">➕ إضافة عمود جديد</button>
+  </div>
+  <br><br>
+  <button onclick="saveData()">💾 حفظ البيانات</button>
+
+  <div class="saved-list">
+    <h3>📋 المعاملات المحفوظة</h3>
+    <div class="search-box">
+      <label>🔍 بحث:</label>
+      <input type="text" id="searchInput" placeholder="اسم أو رقم المعاملة..." oninput="renderSavedData()">
+    </div>
+    <div id="savedData"></div>
+  </div>
+
+  <script>
+    let columnCount = 0; // Global counter for all columns
+
+    // Function to add a new column entry form
+    function addColumn() {
+      columnCount++;
+      const container = document.getElementById('columns-container');
+      const div = document.createElement('div');
+      div.className = 'column-box';
+      div.id = `column_box_${columnCount}`; // Add an ID for easy removal
+      div.innerHTML = `
+        <button class="remove-btn" onclick="removeColumn(${columnCount})">✖️ إزالة</button>
+        <h4>عمود رقم ${columnCount}</h4>
+
+        <h5 class="sub-section-header">بيانات العمود</h5>
+        <label>نوع الحفر (العمود):</label>
+        <select id="dig_type_${columnCount}">
+          <option>بلاط</option>
+          <option>باطون</option>
+          <option>أسفلت</option>
+          <option>تراب</option>
+        </select>
+
+        <label>نوع العمود:</label>
+        <select id="pole_type_${columnCount}">
+          <option>3.5</option>
+          <option>4.5</option>
+          <option>5.5</option>
+          <option>ماسورة</option>
+          <option>مضلع</option>
+          <option>ض.ع</option>
+          <option>فيادر</option>
+        </select>
+        
+        <label>عدد الأعمدة (للتفصيلة الواحدة):</label>
+        <input type="number" step="1" min="1" value="1" id="quantity_of_poles_${columnCount}">
+
+        <label>طول العمود (م):</label>
+        <input type="number" step="0.01" id="length_${columnCount}">
+
+        <label>عرض العمود (م):</label>
+        <input type="number" step="0.01" id="width_${columnCount}">
+
+        <label>عمق العمود (م):</label>
+        <input type="number" step="0.01" id="depth_${columnCount}">
+
+        <h5 class="sub-section-header">بيانات الستي/المربط</h5>
+        <label>نوع الستي / المربط:</label>
+        <select id="tie_type_${columnCount}">
+          <option value="ستي">ستي</option>
+          <option value="ستي ض.ع">ستي ض.ع</option>
+          <option value="ستي لغم">ستي لغم</option>
+          <option value="لا يوجد">لا يوجد</option> </select>
+
+        <div id="tie_details_${columnCount}"> <label>نوع حفر الستي:</label>
+            <select id="tie_dig_type_${columnCount}">
+                <option>تراب</option>
+                <option>باطون</option>
+                <option>أسفلت</option>
+                <option>بلاط</option>
+            </select>
+            <label>طول الستي (م):</label>
+            <input type="number" step="0.01" id="tie_length_${columnCount}">
+            <label>عرض الستي (م):</label>
+            <input type="number" step="0.01" id="tie_width_${columnCount}">
+            <label>عمق الستي (م):</label>
+            <input type="number" step="0.01" id="tie_depth_${columnCount}">
+            <label>عدد الستيات (للتفصيلة الواحدة):</label>
+            <input type="number" step="1" min="0" value="1" id="quantity_of_ties_${columnCount}">
+        </div>
+
+        <label>ملاحظات للعمود:</label>
+        <textarea rows="2" id="column_note_${columnCount}"></textarea>
+      `;
+      container.appendChild(div);
+
+      // Add event listener to toggle tie details based on tie_type selection
+      document.getElementById(`tie_type_${columnCount}`).addEventListener('change', function() {
+          const tieType = this.value;
+          const tieDetailsDiv = document.getElementById(`tie_details_${columnCount}`);
+          if (tieType === 'لا يوجد') {
+              tieDetailsDiv.style.display = 'none';
+              // Optionally clear values if hidden
+              document.getElementById(`tie_dig_type_${columnCount}`).value = 'تراب'; // Reset to default
+              document.getElementById(`tie_length_${columnCount}`).value = '';
+              document.getElementById(`tie_width_${columnCount}`).value = '';
+              document.getElementById(`tie_depth_${columnCount}`).value = '';
+              document.getElementById(`quantity_of_ties_${columnCount}`).value = '0'; // Set quantity to 0
+          } else {
+              tieDetailsDiv.style.display = 'block';
+              document.getElementById(`quantity_of_ties_${columnCount}`).value = '1'; // Reset quantity to 1 if visible
+          }
+      });
+    }
+
+    // Function to remove a column entry form
+    function removeColumn(id) {
+        const element = document.getElementById(`column_box_${id}`);
+        if (element) {
+            element.remove();
+        }
+    }
+
+    // Function to save all data
+    function saveData() {
+      const data = {
+        transaction_name: document.getElementById("transaction_name").value,
+        transaction_number: document.getElementById("transaction_number").value,
+        contractor: document.getElementById("contractor").value,
+        location: document.getElementById("location").value,
+        date: document.getElementById("date").value,
+        general_notes: document.getElementById("general_notes").value,
+        columns: [] // Array to hold all column data
+      };
+
+      const columnBoxes = document.querySelectorAll('.column-box');
+      columnBoxes.forEach(box => {
+          const id = box.id.split('_')[2]; // Extract ID from 'column_box_ID'
+          const tieType = document.getElementById(`tie_type_${id}`).value;
+
+          const col = {
+            id: id, // Store the original ID for reference
+            // Column Details
+            dig_type: document.getElementById(`dig_type_${id}`).value,
+            pole_type: document.getElementById(`pole_type_${id}`).value,
+            quantity_of_poles: document.getElementById(`quantity_of_poles_${id}`).value,
+            length: document.getElementById(`length_${id}`).value,
+            width: document.getElementById(`width_${id}`).value,
+            depth: document.getElementById(`depth_${id}`).value,
+            
+            // Tie Details (only if tie_type is not 'لا يوجد')
+            tie_type: tieType,
+            tie_dig_type: (tieType !== 'لا يوجد') ? document.getElementById(`tie_dig_type_${id}`).value : '',
+            tie_length: (tieType !== 'لا يوجد') ? document.getElementById(`tie_length_${id}`).value : '',
+            tie_width: (tieType !== 'لا يوجد') ? document.getElementById(`tie_width_${id}`).value : '',
+            tie_depth: (tieType !== 'لا يوجد') ? document.getElementById(`tie_depth_${id}`).value : '',
+            quantity_of_ties: (tieType !== 'لا يوجد') ? document.getElementById(`quantity_of_ties_${id}`).value : '0',
+            
+            note: document.getElementById(`column_note_${id}`).value
+          };
+          data.columns.push(col);
+      });
+
+      // Clear the form after saving (optional)
+      document.getElementById("transaction_name").value = '';
+      document.getElementById("transaction_number").value = '';
+      document.getElementById("contractor").value = '';
+      document.getElementById("location").value = '';
+      document.getElementById("date").value = '';
+      document.getElementById("general_notes").value = '';
+      document.getElementById("columns-container").innerHTML = ''; // Clear columns
+      columnCount = 0; // Reset column counter
+
+      const key = "maamala_" + new Date().toISOString();
+      localStorage.setItem(key, JSON.stringify(data));
+      alert("✅ تم حفظ البيانات بنجاح!");
+      renderSavedData(); // Re-render the saved list
+    }
+
+    // Function to render saved data in the list
+    function renderSavedData() {
+      const savedDiv = document.getElementById("savedData");
+      savedDiv.innerHTML = "";
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      let savedKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("maamala_")) {
+          savedKeys.push(key);
+        }
+      }
+      // Sort keys to show newer entries first
+      savedKeys.sort((a, b) => b.localeCompare(a));
+
+      savedKeys.forEach(key => {
+          const data = JSON.parse(localStorage.getItem(key));
+          if (
+            data.transaction_name.toLowerCase().includes(search) ||
+            data.transaction_number.toLowerCase().includes(search)
+          ) {
+            // Calculate total poles and ties
+            let totalPoles = 0;
+            let totalTies = 0;
+            data.columns.forEach(col => {
+                totalPoles += parseInt(col.quantity_of_poles || 1); // Add quantity of poles for each entry
+                if (col.tie_type && col.tie_type !== 'لا يوجد' && col.tie_type !== '') {
+                    totalTies += parseInt(col.quantity_of_ties || 0); // Add quantity of ties if applicable, default 0
+                }
+            });
+
+            const item = document.createElement("div");
+            item.className = "saved-item";
+            item.innerHTML = `
+              <strong>اسم المعاملة:</strong> ${data.transaction_name}<br>
+              <strong>رقم المعاملة:</strong> ${data.transaction_number}<br>
+              <strong>الموقع:</strong> ${data.location}<br>
+              <strong>إجمالي عدد الأعمدة:</strong> ${totalPoles}<br>
+              <strong>إجمالي عدد الستيات:</strong> ${totalTies}
+              <button class="delete-btn" onclick="deleteData('${key}')">🗑️ حذف</button>
+              <button class="view-btn" onclick="viewData('${key}')">عرض التفاصيل</button>
+              <div id="detail_view_${key.replace(/\./g, '_')}" class="detail-view" style="display:none;"></div>
+            `;
+            savedDiv.appendChild(item);
+          }
+      });
+    }
+
+    // Function to delete a saved entry
+    function deleteData(key) {
+        if (confirm("هل أنت متأكد أنك تريد حذف هذه المعاملة؟")) {
+            localStorage.removeItem(key);
+            alert("🗑️ تم حذف المعاملة بنجاح!");
+            renderSavedData();
+        }
+    }
+
+    // Function to view details of a saved entry
+    function viewData(key) {
+        const detailViewId = `detail_view_${key.replace(/\./g, '_')}`;
+        const detailDiv = document.getElementById(detailViewId);
+
+        if (detailDiv.style.display === 'block') {
+            detailDiv.style.display = 'none';
+            return;
+        }
+
+        detailDiv.innerHTML = ''; // Clear previous content
+        const data = JSON.parse(localStorage.getItem(key));
+
+        let htmlContent = `
+            <h4>معلومات عامة:</h4>
+            <p><strong>اسم المعاملة:</strong> ${data.transaction_name}</p>
+            <p><strong>رقم المعاملة:</strong> ${data.transaction_number}</p>
+            <p><strong>المقاول:</strong> ${data.contractor}</p>
+            <p><strong>الموقع:</strong> ${data.location}</p>
+            <p><strong>تاريخ الاستلام:</strong> ${data.date}</p>
+            <p><strong>ملاحظات عامة:</strong> ${data.general_notes || 'لا يوجد'}</p>
+            <hr>
+            <h4>تفاصيل الأعمدة:</h4>
+        `;
+
+        if (data.columns && data.columns.length > 0) {
+            data.columns.forEach((col, index) => {
+                htmlContent += `
+                    <div class="detail-column-item">
+                        <h5>العمود رقم ${index + 1}</h5>
+                        <p class="sub-section-header">بيانات العمود:</p>
+                        <ul>
+                            <li><strong>نوع الحفر (العمود):</strong> ${col.dig_type}</li>
+                            <li><strong>نوع العمود:</strong> ${col.pole_type}</li>
+                            <li><strong>عدد الأعمدة:</strong> ${col.quantity_of_poles || 1}</li>
+                            <li><strong>الطول:</strong> ${col.length || 'N/A'} م</li>
+                            <li><strong>العرض:</strong> ${col.width || 'N/A'} م</li>
+                            <li><strong>العمق:</strong> ${col.depth || 'N/A'} م</li>
+                        </ul>
+                `;
+                // Only show tie details if a tie type is selected and it's not 'لا يوجد'
+                if (col.tie_type && col.tie_type !== 'لا يوجد' && col.tie_type !== '') {
+                     htmlContent += `
+                            <p class="sub-section-header">بيانات الستي/المربط:</p>
+                            <ul>
+                                <li><strong>نوع الستي/المربط:</strong> ${col.tie_type}</li>
+                                <li><strong>نوع حفر الستي:</strong> ${col.tie_dig_type || 'N/A'}</li>
+                                <li><strong>طول الستي:</strong> ${col.tie_length || 'N/A'} م</li>
+                                <li><strong>عرض الستي:</strong> ${col.tie_width || 'N/A'} م</li>
+                                <li><strong>عمق الستي:</strong> ${col.tie_depth || 'N/A'} م</li>
+                                <li><strong>عدد الستيات:</strong> ${col.quantity_of_ties || 1}</li>
+                            </ul>
+                    `;
+                } else {
+                     htmlContent += `
+                            <p><strong>نوع الستي/المربط:</strong> لا يوجد</p>
+                    `;
+                }
+                htmlContent += `
+                            <p><strong>ملاحظات:</strong> ${col.note || 'لا يوجد'}</p>
+                        </div>
+                `;
+            });
+        } else {
+            htmlContent += '<p>لا توجد تفاصيل أعمدة مسجلة لهذه المعاملة.</p>';
+        }
+
+        detailDiv.innerHTML = htmlContent;
+        detailDiv.style.display = 'block';
+    }
+
+    // Initial render when the page loads
+    window.onload = renderSavedData;
+  </script>
+
+</body>
+</html>
